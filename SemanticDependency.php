@@ -44,8 +44,8 @@ $GLOBALS['wgHooks']['ParserFirstCallInit'][] =
 	'efSemanticDependencyParserFunction_Setup';
 $GLOBALS['wgHooks']['SMWStore::updateDataAfter'][] =
 	'SemanticDependency::updateDataAfter';
-$GLOBALS['MessagesDirs']['SemanticDependency'] = __DIR__ . '/i18n';
-$GLOBALS['ExtensionMessagesFiles']['SemanticDependency'] =
+$GLOBALS['wgMessagesDirs']['SemanticDependency'] = __DIR__ . '/i18n';
+$GLOBALS['wgExtensionMessagesFiles']['SemanticDependency'] =
 	__DIR__ . '/SemanticDependency.i18n.php';
 
 function efSemanticDependencyParserFunction_Setup ( & $parser ) {
