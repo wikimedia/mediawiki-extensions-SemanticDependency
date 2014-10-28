@@ -40,20 +40,10 @@ $GLOBALS['wgExtensionCredits']['semantic'][] = array (
 $GLOBALS['wgAutoloadClasses']['SemanticDependency'] =
 	__DIR__ . '/SemanticDependency.class.php';
 
-$GLOBALS['wgHooks']['ParserFirstCallInit'][] =
-	'efSemanticDependencyParserFunction_Setup';
+$GLOBALS['wgHooks']['ParserFirstCallInit'][] = 'SemanticDependency::setup';
 $GLOBALS['wgHooks']['SMWStore::updateDataAfter'][] =
 	'SemanticDependency::updateDataAfter';
+
 $GLOBALS['wgMessagesDirs']['SemanticDependency'] = __DIR__ . '/i18n';
 $GLOBALS['wgExtensionMessagesFiles']['SemanticDependency'] =
 	__DIR__ . '/SemanticDependency.i18n.php';
-
-function efSemanticDependencyParserFunction_Setup ( & $parser ) {
-	if ( !isset( $GLOBALS['SemanticDependency_Properties'] ) ) {
-		$GLOBALS['SemanticDependency_Properties'] = array();
-	}
-	if ( !isset( $GLOBALS['SemanticDependency_JobThreshold'] ) ) {
-		$GLOBALS['SemanticDependency_JobThreshold'] = 1;
-	}
-	return true;
-}

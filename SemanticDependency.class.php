@@ -27,6 +27,25 @@ class SemanticDependency {
 	/**
 	 * @since 1.0
 	 *
+	 * @param Parser &$parser
+	 */
+	public static function setup( &$parser ) {
+
+		if ( !isset( $GLOBALS['SemanticDependency_Properties'] ) ) {
+			$GLOBALS['SemanticDependency_Properties'] = array();
+		}
+
+		if ( !isset( $GLOBALS['SemanticDependency_JobThreshold'] ) ) {
+			$GLOBALS['SemanticDependency_JobThreshold'] = 1;
+		}
+
+		return true;
+
+	}
+
+	/**
+	 * @since 1.0
+	 *
 	 * @param Store $store
 	 * @param SemanticData $semanticData
 	 */
