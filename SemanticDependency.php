@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014 The MITRE Corporation
+ * Copyright (c) 2014-2015 The MITRE Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -29,7 +29,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 $GLOBALS['wgExtensionCredits']['semantic'][] = array (
 	'path' => __FILE__,
 	'name' => 'Semantic Dependency',
-	'version' => '1.0',
+	'version' => '1.1',
 	'author' => array(
 		'[https://www.mediawiki.org/wiki/User:Cindy.cicalese Cindy Cicalese]'
 	),
@@ -40,9 +40,11 @@ $GLOBALS['wgExtensionCredits']['semantic'][] = array (
 $GLOBALS['wgAutoloadClasses']['SemanticDependency'] =
 	__DIR__ . '/SemanticDependency.class.php';
 
-$GLOBALS['wgHooks']['ParserFirstCallInit'][] = 'SemanticDependency::setup';
 $GLOBALS['wgHooks']['SMWStore::updateDataAfter'][] =
 	'SemanticDependency::updateDataAfter';
+$GLOBALS['wgHooks']['ArticleDelete'][] = 'SemanticDependency::articleDelete';
+$GLOBALS['wgHooks']['ArticleDeleteComplete'][] =
+	'SemanticDependency::articleDeleteComplete';
 
 $GLOBALS['wgMessagesDirs']['SemanticDependency'] = __DIR__ . '/i18n';
 $GLOBALS['wgExtensionMessagesFiles']['SemanticDependency'] =

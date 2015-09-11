@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014 The MITRE Corporation
+ * Copyright (c) 2014-2015 The MITRE Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -24,24 +24,7 @@
 
 class SemanticDependency {
 
-	/**
-	 * @since 1.0
-	 *
-	 * @param Parser &$parser
-	 */
-	public static function setup( &$parser ) {
-
-		if ( !isset( $GLOBALS['SemanticDependency_Properties'] ) ) {
-			$GLOBALS['SemanticDependency_Properties'] = array();
-		}
-
-		if ( !isset( $GLOBALS['SemanticDependency_JobThreshold'] ) ) {
-			$GLOBALS['SemanticDependency_JobThreshold'] = 1;
-		}
-
-		return true;
-
-	}
+	private static $titles = array();
 
 	/**
 	 * @since 1.0
@@ -52,6 +35,7 @@ class SemanticDependency {
 	public static function updateDataAfter( \SMW\Store $store,
 		\SMW\SemanticData $semanticData ) {
 
+		self::setup();
 		$instance = new self( $store, $semanticData );
 		$instance->setConfiguration(
 			$GLOBALS['SemanticDependency_Properties'],
@@ -59,6 +43,72 @@ class SemanticDependency {
 		$instance->performUpdate();
 
 		return true;
+	}
+
+	/**
+	 * @since 1.1
+	 *
+	 * @param WikiPage &$article
+	 * @param User &$user
+	 * @param &$reason
+	 * @param &$error
+	 */
+	public static function articleDelete( WikiPage &$article,
+		User &$user, &$reason, &$error ) {
+
+		self::setup();
+		$store = \SMW\StoreFactory::getStore();
+		$page = SMWDIWikiPage::newFromTitle( $article->getTitle() );
+		$semanticData = $store->getSemanticData( $page );
+		$instance = new self( $store, $semanticData );
+		$instance->setConfiguration(
+			$GLOBALS['SemanticDependency_Properties'],
+			$GLOBALS['SemanticDependency_JobThreshold'] );
+		$instance->saveDependentTitles();
+
+		return true;
+	}
+
+	/**
+	 * @since 1.1
+	 *
+	 * @param WikiPage &$article
+	 * @param User &$user
+	 * @param $reason
+	 * @param $id
+	 * @param $content
+	 * @param $logEntry
+	 */
+	public static function articleDeleteComplete( WikiPage &$article,
+		User &$user, $reason, $id, $content, $logEntry ) {
+
+		self::setup();
+		$store = \SMW\StoreFactory::getStore();
+		$page = SMWDIWikiPage::newFromTitle( $article->getTitle() );
+		$semanticData = $store->getSemanticData( $page );
+		$instance = new self( $store, $semanticData );
+		$instance->setConfiguration(
+			$GLOBALS['SemanticDependency_Properties'],
+			$GLOBALS['SemanticDependency_JobThreshold'] );
+		$instance->performUpdate();
+
+		return true;
+	}
+
+	/**
+	 * @since 1.0
+	 *
+	 * @param Parser &$parser
+	 */
+	private static function setup() {
+
+		if ( !isset( $GLOBALS['SemanticDependency_Properties'] ) ) {
+			$GLOBALS['SemanticDependency_Properties'] = array();
+		}
+
+		if ( !isset( $GLOBALS['SemanticDependency_JobThreshold'] ) ) {
+			$GLOBALS['SemanticDependency_JobThreshold'] = 1;
+		}
 	}
 
 	private $store;
@@ -90,6 +140,20 @@ class SemanticDependency {
 	}
 
 	/**
+	 * @since 1.1
+	 */
+	public function saveDependentTitles() {
+
+		$title = $this->semanticData->getSubject()->getTitle();
+
+		$dependentTitles = $this->getDependentTitles( $title );
+
+		$titleText = $title->getPrefixedText();
+
+		self::$titles[$titleText] = $dependentTitles;
+	}
+
+	/**
 	 * @since 1.0
 	 */
 	public function performUpdate() {
@@ -97,6 +161,18 @@ class SemanticDependency {
 		$title = $this->semanticData->getSubject()->getTitle();
 
 		$dependentTitles = $this->getDependentTitles( $title );
+
+		if ( $dependentTitles == array() ) {
+
+			// page may have been deleted; see if we've saved info for it
+			$titleText = $title->getPrefixedText();
+
+			if ( array_key_exists( $titleText, self::$titles ) ) {
+
+				// page was deleted; get saved list of dependent titles
+				$dependentTitles = self::$titles[$titleText];
+			}
+		}
 
 		$jobs = array();
 
