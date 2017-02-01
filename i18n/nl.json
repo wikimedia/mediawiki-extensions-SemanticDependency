@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Esketti"
+			"Esketti",
+			"QZanden"
 		]
 	},
-	"semanticdependency-desc": "Maakt gebruik van een semantische eigenschap om aan te geven pagina ' s die moeten worden verwijderd wanneer de pagina met de eigenschap is gewijzigd"
+	"semanticdependency-desc": "Maakt gebruik van een semantische eigenschap om pagina's aan te geven die moeten worden gecontroleerd wanneer de pagina met de eigenschap is gewijzigd."
 }
