@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * Copyright (c) 2014-2015 The MITRE Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -22,30 +21,34 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+// Ensure that the script cannot be executed outside of MediaWiki.
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This is an extension to the MediaWiki package and cannot be run standalone." );
 }
 
-$GLOBALS['wgExtensionCredits']['semantic'][] = array (
+// Display extension properties on MediaWiki.
+$GLOBALS['wgExtensionCredits']['semantic'][] = array(
 	'path' => __FILE__,
 	'name' => 'Semantic Dependency',
-	'version' => '1.1',
+	'version' => '1.2',
 	'author' => array(
 		'[https://www.mediawiki.org/wiki/User:Cindy.cicalese Cindy Cicalese]'
 	),
 	'descriptionmsg' => 'semanticdependency-desc',
 	'url' => 'https://www.mediawiki.org/wiki/Extension:Semantic_Dependency',
+	'license-name' => 'MIT'
 );
 
+// Load extension's classes.
 $GLOBALS['wgAutoloadClasses']['SemanticDependency'] =
 	__DIR__ . '/SemanticDependency.class.php';
 
+// Register extension hooks.
 $GLOBALS['wgHooks']['SMWStore::updateDataAfter'][] =
 	'SemanticDependency::updateDataAfter';
 $GLOBALS['wgHooks']['ArticleDelete'][] = 'SemanticDependency::articleDelete';
 $GLOBALS['wgHooks']['ArticleDeleteComplete'][] =
 	'SemanticDependency::articleDeleteComplete';
 
+// Register extension messages and other localisation.
 $GLOBALS['wgMessagesDirs']['SemanticDependency'] = __DIR__ . '/i18n';
-$GLOBALS['wgExtensionMessagesFiles']['SemanticDependency'] =
-	__DIR__ . '/SemanticDependency.i18n.php';
