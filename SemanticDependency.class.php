@@ -178,7 +178,7 @@ class SemanticDependency {
 
 		$count = 1;
 		foreach ( $dependentTitles as $dependentTitle ) {
-			$job = new SMWUpdateJob( $dependentTitle );
+			$job = new SMWUpdateJob( $dependentTitle, [] );
 			if ( $count > $this->jobThreshold ) {
 				$jobs[] = $job;
 			} else {
